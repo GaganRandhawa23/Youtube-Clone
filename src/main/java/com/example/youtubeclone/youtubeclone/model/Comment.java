@@ -1,5 +1,6 @@
 package com.example.youtubeclone.youtubeclone.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -21,9 +22,12 @@ public class Comment {
     private Long commentId;
     @Column(name = "comment")
     private String comment;
-    @Column(name = "user")
+    @ManyToOne(cascade = {CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE})
+    @JoinColumn(name = "user_id")
     private User user;
-    @Column(name = "video")
+    @JsonIgnore
+    @ManyToOne(cascade = {CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE})
+    @JoinColumn(name = "video_id")
     private Video video;
     @Column(name = "created_at")
     private LocalDateTime createdAt;

@@ -25,5 +25,6 @@ public class Tag {
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 
+    @ManyToMany(mappedBy = "tags", cascade = {CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE})
     private List<Video> videos;
 }

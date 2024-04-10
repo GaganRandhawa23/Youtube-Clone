@@ -31,19 +31,18 @@ public class User {
     @Column(name = "profile_dp")
     private String profilePic;
 
-//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-//    private List<Comment> comments;
-
-//    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-//    private List<Video> uploadedVideos;
-
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Comment> comments;
+
+    @OneToMany(mappedBy = "user")
     private List<Video> watchLaterVideos;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @ManyToMany(cascade = {CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE})
+    @JoinTable(
+            name = "user_channels",
+            joinColumns = {@JoinColumn(name = "user_id")},
+            inverseJoinColumns = {@JoinColumn(name = "channel_id")}
+    )
     private List<Channel> subscribedChannels;
-
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Channel> createdChannels;
 
 }

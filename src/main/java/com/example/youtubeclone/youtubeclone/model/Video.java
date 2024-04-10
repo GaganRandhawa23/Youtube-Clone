@@ -1,5 +1,6 @@
 package com.example.youtubeclone.youtubeclone.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -26,14 +27,28 @@ public class Video {
     private String description;
     @Column(name = "url")
     private String url;
-    @Column(name = "channel")
-    private Channel channel;
     @Column(name = "created_at")
     private LocalDateTime createdAt;
     @Column(name = "like_count")
     private Long likeCount;
 
+    @JsonIgnore
+    @ManyToOne(cascade = {CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE})
+    @JoinColumn(name = "channel_id")
+    private Channel channel;
+
+    @OneToMany(mappedBy = "video", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Comment> comments;
 
+    @ManyToMany(cascade = {CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE})
+    @JoinTable(
+            name = "video_tag",
+            joinColumns = {@JoinColumn(name = "video_id")},
+            inverseJoinColumns = {@JoinColumn(name = "tag_id")}
+    )
     private List<Tag> tags;
+
+    @ManyToOne(cascade = {CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE})
+    @JoinColumn(name = "user_id")
+    private User user;
 }
