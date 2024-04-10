@@ -29,6 +29,8 @@ public class Comment {
     @ManyToOne(cascade = {CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE})
     @JoinColumn(name = "video_id")
     private Video video;
+    @Column(name = "like_count")
+    private Long likeCount;
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 }
