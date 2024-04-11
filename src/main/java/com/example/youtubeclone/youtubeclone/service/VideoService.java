@@ -53,6 +53,8 @@ public class VideoService {
         File convertedFile = convertMultiPartFile(videoUploadDto.getFile());
         String filename = System.currentTimeMillis() + "_" + videoUploadDto.getFile().getOriginalFilename();
         s3Client.putObject(new PutObjectRequest(BucketName, filename, convertedFile));
+        boolean checkIfFileDeleted = convertedFile.delete();
+        System.out.println(checkIfFileDeleted);
 
         String[] tagNames = videoUploadDto.getTags().split(",");
         List<Tag> newTags = new ArrayList<>();
@@ -90,7 +92,6 @@ public class VideoService {
                 .tags(allUniqueTagsForThisVideo)
                 .build();
         videoRepository.save(video);
-        convertedFile.delete();
         return "file Uploaded : " + filename;
     }
 
