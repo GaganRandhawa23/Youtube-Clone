@@ -1,38 +1,36 @@
 package com.example.youtubeclone.youtubeclone.controller;
 
+import com.example.youtubeclone.youtubeclone.dto.VideoUploadDto;
 import com.example.youtubeclone.youtubeclone.service.VideoService;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @Controller
-@RequestMapping("/videos")
+@RequestMapping("/channel")
+@AllArgsConstructor
 public class VideoController {
 
     private VideoService videoService;
 
-    @Autowired
-    public VideoController(VideoService videoService) {
-        this.videoService = videoService;
-    }
-    @GetMapping("/home")
-    public String home()
+    @GetMapping("/upload")
+    public String uploadVideo()
     {
-        return "upload";
+        return "upload-video";
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<String> UploadVideo(MultipartFile file, String title, String description){
-        return new ResponseEntity<>(videoService.uploadFile(file,title,description), HttpStatus.OK);
+    @PostMapping("/upload/v")
+    public ResponseEntity<String> UploadVideo(
+            VideoUploadDto videoUploadDto
+    ){
+        return new ResponseEntity<>(videoService.uploadFile(videoUploadDto), HttpStatus.OK);
+//        return new ResponseEntity<>(videoService.uploadFile(file,title,description), HttpStatus.OK);
     }
 
     @GetMapping("/preview/{url}")
@@ -57,7 +55,7 @@ public class VideoController {
     public String delete(@PathVariable String url,Model  model)
     {
         videoService.deleteVideo(url);
-        return "upload";
+        return "upload-video";
     }
 
 

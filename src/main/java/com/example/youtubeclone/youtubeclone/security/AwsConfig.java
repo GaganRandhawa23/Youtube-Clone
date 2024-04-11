@@ -1,4 +1,4 @@
-package com.example.youtubeclone.youtubeclone.config;
+package com.example.youtubeclone.youtubeclone.security;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
