@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Video Preview</title>
+</head>
+<body>
+<h2>Video Preview</h2>
+<div>
+    <!--    <div th:if="${video != null}">-->
+    <!--        <h2 th:text="${video.title}"></h2>-->
+    <!--        <p th:text="${video.description}"></p>-->
+    <!--    </div>-->
+    <iframe th:src="@{'/videos/preview/' + ${url}}" width="640" height="360" frameborder="0" allowfullscreen></iframe>
+
+    <div>
+        <a th:href="@{'/videos/delete/' + ${url}}">Delete</a>
+        <a th:href="@{'/videos/update/' + ${url}}">Update</a>
+        <a th:href="@{/videos/home}">Home</a>
+    </div>
+</div>
+</body>
+</html>
