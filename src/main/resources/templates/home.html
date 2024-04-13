@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube</title>
+    <style>
+        /* Reset default browser styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+/* Sidebar styles */
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 200px;
+    height: 100%;
+    background-color: #333;
+    padding-top: 60px; /* Adjust according to header height */
+}
+
+.sidebar button {
+    display: block;
+    width: 100%;
+    padding: 10px 0;
+    text-align: center;
+    color: #fff;
+    background-color: transparent;
+    border: none;
+    border-bottom: 1px solid #555;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.sidebar button:hover {
+    background-color: #555;
+}
+/* Global styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: black;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display:flex;
+}
+
+/* Header styles */
+header {
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 15px 0;
+    background-color:black;
+}
+
+.logo img {
+   position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 150px; /* Adjust size as needed */
+    height: 50px; /* Maintain aspect ratio */
+    z-index: 9999; /* Ensure the logo is above other content */
+}
+
+.search-bar {
+    margin-left: 394px;
+    display:flex;
+}
+
+.search-bar input[type="text"] {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 300px;
+    height:40px;
+}
+
+.search-bar button {
+    padding: 8px 15px;
+    background-color: #ff0000;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    height:40px;
+}
+
+/* Main content styles */
+main {
+    padding: 20px 0;
+}
+
+.video-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.video-item {
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.video-item img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+.video-details {
+    padding: 10px;
+}
+
+.video-details h3 {
+    font-size: 16px;
+    margin-bottom: 5px;
+}
+.ff{
+display:flex;
+}
+
+.video-details p {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 5px;
+}
+
+.video-details span {
+    font-size: 12px;
+    color: #888;
+}
+
+a{
+margin-right:10px;
+color:white;
+}
+
+/* Footer styles */
+footer {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background-color: #f9f9f9;
+    padding: 15px 0;
+    text-align: center;
+}
+
+
+    </style>
+</head>
+<body>
+<header>
+    <div class="container">
+        <div class="logo">
+            <img src="https://t3.ftcdn.net/jpg/05/07/46/84/360_F_507468479_HfrpT7CIoYTBZSGRQi7RcWgo98wo3vb7.jpg" alt="YourTube Logo">
+        </div>
+        <div class="search-bar">
+            <input type="text" placeholder="Search">
+            <button>Search</button>
+        </div>
+    </div>
+</header>
+
+<div class="ff">
+<div class="sidebar">
+    <button>Home</button>
+    <button>Subscriptions</button>
+    <button>Your Channel</button>
+    <button>Watch Later</button>
+</div>
+<main>
+    <div class="video-list">
+        <!-- Iterate over videos and render them -->
+        <div th:each="video : ${videos}" class="video-item">
+            <img th:src="${video.url}" alt="Video Thumbnail">
+            <div class="video-details">
+                <h3 th:text="${video.title}">Video Title</h3>
+<!--                <p>Channel: <span th:text="${video.channel.channelName}">Channel Name</span></p>-->
+                <p>Likes: <span th:text="${video.likeCount}">0</span></p>
+                <!-- Add more details as needed -->
+            </div>
+        </div>
+    </div>
+</main>
+</div>
+
+
+<footer>
+    <p>&copy; 2024 YourTube</p>
+</footer>
+</body>
+</html>

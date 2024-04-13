@@ -129,4 +129,9 @@ public class VideoService {
         }
         return convertedFileEntity;
     }
+
+    public List<Video> getAllVideos() {
+       return  videoRepository.findAll();
+    }
+
 }
