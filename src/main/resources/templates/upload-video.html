@@ -20,6 +20,10 @@
         <label for="tags">Tags:</label>
         <input type="text" id="tags" name="tags" placeholder="comma separated tags" required><br><br>
 
+        <select name="channelName">
+            <option th:each="channel : ${channels}" th:text="${channel.getChannelName()}"></option>
+        </select>
+
         <button type="submit">Upload Video</button>
     </form>
 

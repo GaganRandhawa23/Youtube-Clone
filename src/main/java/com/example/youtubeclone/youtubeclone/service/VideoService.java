@@ -5,9 +5,11 @@ import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.amazonaws.services.s3.model.S3Object;
 import com.amazonaws.services.s3.model.S3ObjectInputStream;
 import com.example.youtubeclone.youtubeclone.dto.VideoUploadDto;
+import com.example.youtubeclone.youtubeclone.model.Channel;
 import com.example.youtubeclone.youtubeclone.model.Tag;
 import com.example.youtubeclone.youtubeclone.model.User;
 import com.example.youtubeclone.youtubeclone.model.Video;
+import com.example.youtubeclone.youtubeclone.repository.ChannelRepository;
 import com.example.youtubeclone.youtubeclone.repository.TagRepository;
 import com.example.youtubeclone.youtubeclone.repository.VideoRepository;
 import lombok.AllArgsConstructor;
@@ -29,6 +31,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class VideoService {
@@ -41,6 +44,8 @@ public class VideoService {
 
     private VideoRepository videoRepository;
     private TagRepository tagRepository;
+    @Autowired
+    private ChannelRepository channelRepository;
 
     @Autowired
     public VideoService(VideoRepository videoRepository, TagRepository tagRepository) {
@@ -52,9 +57,34 @@ public class VideoService {
     public String uploadFile(VideoUploadDto videoUploadDto) {
         File convertedFile = convertMultiPartFile(videoUploadDto.getFile());
         String filename = System.currentTimeMillis() + "_" + videoUploadDto.getFile().getOriginalFilename();
-        s3Client.putObject(new PutObjectRequest(BucketName, filename, convertedFile));
-        boolean checkIfFileDeleted = convertedFile.delete();
-        System.out.println(checkIfFileDeleted);
+//        s3Client.putObject(new PutObjectRequest(BucketName, filename, convertedFile));
+//        boolean checkIfFileDeleted = convertedFile.delete();
+//        System.out.println(checkIfFileDeleted);
+
+        try {
+            // Upload file to S3 asynchronously
+            CompletableFuture.runAsync(() -> {
+                try {
+                    s3Client.putObject(new PutObjectRequest(BucketName, filename, convertedFile));
+                    boolean checkIfFileDeleted = convertedFile.delete();
+                    if (checkIfFileDeleted) {
+                        // Redirect upon successful upload
+                        System.out.println("File uploaded successfully.");
+                    } else {
+                        // Log error if file deletion fails
+                        System.out.println("Error: Failed to delete the uploaded file.");
+                    }
+                } catch (Exception e) {
+                    // Log error if upload fails
+                    System.out.println("Error: File upload failed.");
+                    e.printStackTrace();
+                }
+            });
+        } catch (Exception e) {
+            // Log error if asynchronous task submission fails
+            System.out.println("Error: Failed to upload file asynchronously.");
+            e.printStackTrace();
+        }
 
         String[] tagNames = videoUploadDto.getTags().split(",");
         List<Tag> newTags = new ArrayList<>();
@@ -82,13 +112,16 @@ public class VideoService {
             }
         }
 
+        Channel channel = channelRepository.findChannelByChannelName(videoUploadDto.getChannelName());
+
         Video video = Video.builder()
                 .title(videoUploadDto.getTitle())
                 .description(videoUploadDto.getDescription())
                 .url(filename)
                 .createdAt(LocalDateTime.now())
                 .likeCount(0L)
-                .user(null)
+                .user(channel.getUser())
+                .channel(channel)
                 .tags(allUniqueTagsForThisVideo)
                 .build();
         videoRepository.save(video);

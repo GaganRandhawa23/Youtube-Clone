@@ -1,7 +1,9 @@
 package com.example.youtubeclone.youtubeclone.controller;
 
+import com.example.youtubeclone.youtubeclone.model.Channel;
 import com.example.youtubeclone.youtubeclone.model.User;
 import com.example.youtubeclone.youtubeclone.model.Video;
+import com.example.youtubeclone.youtubeclone.service.ChannelService;
 import com.example.youtubeclone.youtubeclone.service.UserService;
 import com.example.youtubeclone.youtubeclone.service.VideoService;
 import lombok.AllArgsConstructor;
@@ -19,6 +21,7 @@ import java.util.List;
 public class HomeController {
     private final VideoService videoService;
     private final UserService userService;
+    private final ChannelService channelService;
 
     @GetMapping("/")
     public String home(Model model, OAuth2AuthenticationToken authentication) {
@@ -34,6 +37,14 @@ public class HomeController {
             newUser.setProfilePic(profile_dp);
             newUser.setJoinDate(LocalDateTime.now());
             userService.saveUser(newUser);
+            Channel channel = Channel.builder()
+                    .url("/channel/"+name)
+                    .user(newUser)
+                    .channelName(newUser.getUsername())
+                    .profilePic(newUser.getProfilePic())
+                    .createdAt(LocalDateTime.now())
+                    .build();
+            channelService.saveChannel(channel);
         }
         // Fetch all videos using the VideoService
         List<Video> videos = videoService.getAllVideos();
