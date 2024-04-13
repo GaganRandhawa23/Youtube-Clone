@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>create channel</title>
+</head>
+<body>
+    <h1>
+        Create channel
+    </h1>
+    <form th:action="@{/channel/c}" method="post">
+        <input type="text" name="channelName">
+        <button type="submit">Create Channel</button>
+    </form>
+</body>
+</html>

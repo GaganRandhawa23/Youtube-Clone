@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube</title>
+    <style>
+        /* Reset default browser styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        /* Sidebar styles */
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 200px;
+            height: 100%;
+            background-color: #333;
+            padding-top: 60px; /* Adjust according to header height */
+        }
+
+        .ff{
+            display:flex;
+
+        }
+
+        /* Sidebar styles */
+        .sidebar {
+            width: 200px;
+            height: 100vh; /* Full height of viewport */
+            background-color: #333;
+            padding-top: 70px; /* Adjust according to header height */
+            position:fixed;
+        }
+
+        .sidebar button {
+            display: block;
+            width: 100%;
+            padding: 20px 0;
+            text-align: center;
+            font-size:17px;
+            color: #fff;
+            background-color: transparent;
+            border: none;
+            border-bottom: 1px solid #555;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .sidebar button:hover {
+            background-color: #555;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header styles */
+        header {
+            background-color: #333;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            padding: 15px 0;
+
+        }
+
+        .logo img {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            width: 150px; /* Adjust size as needed */
+            height: 50px; /* Maintain aspect ratio */
+            z-index: 9999; /* Ensure the logo is above other content */
+        }
+
+        .search-bar {
+            margin-left: 394px;
+            display:flex;
+        }
+
+        .search-bar input[type="text"] {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 300px;
+            height:40px;
+        }
+
+        .search-bar button {
+            padding: 8px 15px;
+            background-color: #ff0000;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            height:40px;
+        }
+
+        /* Main content styles */
+        .klkl{
+            padding: 20px;
+            display:flex;
+
+        }
+        .video-item {
+            background-color: #fff;
+            border: 2px solid black;
+            padding:5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            border-radius:8px;
+            transition: transform 0.2s ease;
+            cursor: pointer;
+            width: 31%;
+            height: 90%;
+        }
+
+        .video-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .video-item img {
+            width: 100%;
+            height: auto;
+            object-fit: cover;
+        }
+
+        .video-details {
+            padding: 15px;
+        }
+
+        .video-details h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .video-details p {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .video-details span {
+            font-size: 12px;
+            color: #888;
+        }
+        .channel-container{
+            display: flex;
+            width: 100%;
+            margin-left: 225px;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-top: 29px
+        }
+
+        .channel-img {
+            border-radius: 50%;
+        }
+
+        a{
+            margin-right:10px;
+            color:white;
+        }
+
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="container">
+        <div class="logo">
+            <img src="https://t3.ftcdn.net/jpg/05/07/46/84/360_F_507468479_HfrpT7CIoYTBZSGRQi7RcWgo98wo3vb7.jpg" alt="YourTube Logo">
+        </div>
+        <div class="search-bar">
+            <input type="text" placeholder="Search">
+            <button>Search</button>
+        </div>
+    </div>
+</header>
+<div class="ff">
+    <aside class="sidebar">
+        <button>Home</button>
+        <button>Subscriptions</button>
+        <button>Your Channel</button>
+        <button>Watch Later</button>
+    </aside>
+    <div class="channel-container">
+        <aside>
+            <img class="channel-img" th:src="${channel.getProfilePic()}" />
+        </aside>
+        <div class="channelHeader">
+            <h1 th:text="${channel.getChannelName()}"></h1>
+            <span>
+                <p th:text="${channel.getNumberOfSubscribedUsers()} + subscribers"></p>
+                <span>
+                    <p th:text="${channel.getNumberOfVideos()} + videos"></p>
+                </span>
+            </span>
+        </div>
+    </div>
+    <br>
+    <hr>
+    <br>
+    <div class="video-list">
+        <!-- Iterate over videos and render them -->
+        <div th:each="video : ${channel.getVideos()}" class="video-item">
+            <img th:src="${video.url}" alt="Video Thumbnail">
+            <div class="video-details">
+                <h3 th:text="${video.title}">Video Title</h3>
+<!--                                <p>Channel: <span th:text="${video.channel.channelName}">Channel Name</span></p>-->
+                <p>Likes: <span th:text="${video.likeCount}">0</span></p>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -14,9 +14,9 @@ public class ChannelRestController {
 
     private final ChannelService channelService;
 
-    @PostMapping("/create")
-    public String createChannel(@RequestBody String channelName) {
-        channelService.saveChannel(channelName);
-        return "true";
-    }
+//    @PostMapping("/create")
+//    public String createChannel(@RequestBody String channelName) {
+//        channelService.saveChannel(channelName);
+//        return "true";
+//    }
 }

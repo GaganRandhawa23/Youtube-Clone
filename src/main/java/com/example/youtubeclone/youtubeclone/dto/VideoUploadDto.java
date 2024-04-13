@@ -13,4 +13,5 @@ public class VideoUploadDto {
     private String description;
     private MultipartFile file;
     private String tags;
+    private String channelName;
 }

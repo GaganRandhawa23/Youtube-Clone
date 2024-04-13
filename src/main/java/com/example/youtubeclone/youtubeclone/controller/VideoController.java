@@ -1,27 +1,44 @@
 package com.example.youtubeclone.youtubeclone.controller;
 
 import com.example.youtubeclone.youtubeclone.dto.VideoUploadDto;
+import com.example.youtubeclone.youtubeclone.model.Channel;
+import com.example.youtubeclone.youtubeclone.model.User;
+import com.example.youtubeclone.youtubeclone.service.ChannelService;
+import com.example.youtubeclone.youtubeclone.service.UserService;
 import com.example.youtubeclone.youtubeclone.service.VideoService;
 import lombok.AllArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import java.util.*;
 
 @Controller
 @RequestMapping("/channel")
 @AllArgsConstructor
 public class VideoController {
 
-    private VideoService videoService;
+    private final ChannelService channelService;
+    private final VideoService videoService;
+    private final UserService userService;
 
     @GetMapping("/upload")
-    public String uploadVideo()
+    public String uploadVideo(
+            OAuth2AuthenticationToken authentication,
+            Model model
+    )
     {
+        OAuth2AuthenticatedPrincipal oauth2Principal = (OAuth2AuthenticatedPrincipal) authentication.getPrincipal();
+        String email = oauth2Principal.getAttribute("email");
+        User user = userService.getUserByEmail(email);
+        List<Channel> channelList = channelService.findChannelByUser(user);
+        model.addAttribute("channels", channelList);
         return "upload-video";
     }
 
