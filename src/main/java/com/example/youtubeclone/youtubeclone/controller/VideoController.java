@@ -61,6 +61,32 @@ public class VideoController {
                 .body(resource);
     }
 
+    @GetMapping("/thumbnail/{url}")
+    public ResponseEntity<ByteArrayResource> previewThumbnail(@PathVariable String url) {
+        byte[] data = videoService.getThumbnailFromUrl (url);// Assuming you have a method to retrieve video file data by URL
+        ByteArrayResource resource = new ByteArrayResource(data);
+        String contentType = getContentType(url);
+        return ResponseEntity
+                .ok()
+                .contentLength(data.length)
+                .contentType(MediaType.parseMediaType(contentType)) // Set appropriate content type for video files
+                .body(resource);
+    }
+
+    private String getContentType(String url) {
+        String extension = url.substring(url.lastIndexOf(".") + 1);
+        switch (extension.toLowerCase()) {
+            case "jpg":
+            case "jpeg":
+                return "image/jpeg";
+            case "png":
+                return "image/png";
+            // Add more cases for other image types if needed
+            default:
+                return "application/octet-stream"; // Default to octet-stream if type is unknown
+        }
+    }
+
     @GetMapping("/view/{url}")
     public String view(@PathVariable String url,Model  model)
     {

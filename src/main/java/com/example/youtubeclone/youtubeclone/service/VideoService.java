@@ -58,9 +58,9 @@ public class VideoService {
         File convertedFile = convertMultiPartFile(videoUploadDto.getFile());
         File thumbnailFileImage = convertMultiPartFile(videoUploadDto.getThumbnail());
         String filename = System.currentTimeMillis() + "_" + replaceWhiteSpaces(Objects.requireNonNull(videoUploadDto.getFile().getOriginalFilename()));
-        System.out.println(filename);
+//        System.out.println(filename);
         String thumbnailFileName = System.currentTimeMillis() + "_" + replaceWhiteSpaces(Objects.requireNonNull(videoUploadDto.getThumbnail().getOriginalFilename()));
-        System.out.println(thumbnailFileName);
+//        System.out.println(thumbnailFileName);
 //        s3Client.putObject(new PutObjectRequest(BucketName, filename, convertedFile));
 //        boolean checkIfFileDeleted = convertedFile.delete();
 //        System.out.println(checkIfFileDeleted);
@@ -144,6 +144,21 @@ public class VideoService {
             return content;
         } catch (IOException e) {
             e.printStackTrace();
+        }
+        return null;
+    }
+
+    public byte[] getThumbnailFromUrl(String thumbnailUrl) {
+        try {
+            // Retrieve the thumbnail file from Amazon S3 based on the URL
+            S3Object s3Object = s3Client.getObject(BucketName, thumbnailUrl);
+            S3ObjectInputStream inputStream = s3Object.getObjectContent();
+            byte[] content = StreamUtils.copyToByteArray(inputStream);
+            inputStream.close();
+            return content;
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Handle any errors that occur during the process
         }
         return null;
     }
