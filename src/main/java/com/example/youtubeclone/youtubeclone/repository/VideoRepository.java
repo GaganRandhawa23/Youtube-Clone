@@ -8,4 +8,9 @@ import org.springframework.stereotype.Repository;
 public interface VideoRepository  extends JpaRepository<Video,Integer>{
 
     void deleteByUrl(String url);
+
+    Video findByVideoId(Long id);
+
+
+    Video findVideoByUrl(String url);
 }

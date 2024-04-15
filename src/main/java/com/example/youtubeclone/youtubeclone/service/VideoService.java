@@ -59,9 +59,9 @@ public class VideoService {
         File convertedFile = convertMultiPartFile(videoUploadDto.getFile());
         File thumbnailFileImage = convertMultiPartFile(videoUploadDto.getThumbnail());
         String filename = System.currentTimeMillis() + "_" + replaceWhiteSpaces(Objects.requireNonNull(videoUploadDto.getFile().getOriginalFilename()));
-//        System.out.println(filename);
+        System.out.println(filename);
         String thumbnailFileName = System.currentTimeMillis() + "_" + replaceWhiteSpaces(Objects.requireNonNull(videoUploadDto.getThumbnail().getOriginalFilename()));
-//        System.out.println(thumbnailFileName);
+        System.out.println(thumbnailFileName);
 //        s3Client.putObject(new PutObjectRequest(BucketName, filename, convertedFile));
 //        boolean checkIfFileDeleted = convertedFile.delete();
 //        System.out.println(checkIfFileDeleted);
@@ -194,4 +194,11 @@ public class VideoService {
         return str.replaceAll("\\s+", "_");
     }
 
+    public Video findByVideoId(Long videoId) {
+        return videoRepository.findByVideoId(videoId);
+    }
+
+    public Video findByUrl(String url) {
+        return videoRepository.findVideoByUrl(url);
+    }
 }
