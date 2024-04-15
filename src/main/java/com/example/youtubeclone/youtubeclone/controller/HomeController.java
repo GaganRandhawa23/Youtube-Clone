@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Controller
 @AllArgsConstructor
@@ -33,7 +34,7 @@ public class HomeController {
         if (existingUser == null) {
             User newUser = new User();
             newUser.setEmail(email);
-            newUser.setUsername(name);
+            newUser.setUsername(VideoService.replaceWhiteSpaces(Objects.requireNonNull(name)));
             newUser.setProfilePic(profile_dp);
             newUser.setJoinDate(LocalDateTime.now());
             userService.saveUser(newUser);
