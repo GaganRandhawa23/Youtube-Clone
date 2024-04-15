@@ -10,7 +10,7 @@
         }
 
         .container {
-            background: url("https://t4.ftcdn.net/jpg/03/71/56/17/360_F_371561707_MMRvwjvBxemkuHkPLyEw65TKPuOuVzZh.jpg");
+            background: url("https://static1.anpoimages.com/wordpress/wp-content/uploads/2020/02/youtube-generic-hero.png");
             background-size: cover;
             width: 100%;
             height: 100vh;
@@ -37,15 +37,17 @@
         }
 
         .container .row2 {
-            height: calc(100vh - 50px);
             display: flex;
             justify-content: center;
             align-items: center;
             flex-direction: column;
-        }
+             position: fixed;
+        bottom: 10px; /* Adjust this value as needed */
+        left: 50%;
+        transform: translateX(-50%);
 
-        .container .row2 img {
-            height: 77px;
+        padding: 10px;
+
         }
 
         .container .row2 div {
@@ -64,16 +66,12 @@
 <body>
 <div class="container">
     <div class="row1">
-        <div class="left">Youtube</div>
-        <div class="right">
-            <div><a class="login-link" th:href="@{/oauth2/authorization/google}">Sign in</a></div>
-        </div>
     </div>
 
     <div class="row2">
-        <img src="https://image.similarpng.com/very-thumbnail/2020/07/Youtube-logo-with--new-style-on-transparent-background-PNG.png">
-        <div>Broadcast Yourself</div>
-        <a th:href="@{/oauth2/authorization/google}"><button>Go to Youtube</button></a>
+        <a th:href="@{/oauth2/authorization/google}">
+            <button >Sign In</button>
+        </a>
     </div>
 
 </div>

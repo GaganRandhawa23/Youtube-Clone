@@ -48,11 +48,11 @@ public class HomeController {
             channelService.saveChannel(channel);
         }
         // Fetch all videos using the VideoService
+        existingUser = userService.getUserByEmail(email);
         List<Video> videos = videoService.getAllVideos();
         System.out.println(videos);
-
-        // Add the videos to the model to be rendered in the view
         model.addAttribute("videos", videos);
+        model.addAttribute("user",existingUser);
 
         // Return the name of the view to render (e.g., "home.html")
         return "home";
