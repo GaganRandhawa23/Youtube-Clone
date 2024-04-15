@@ -199,6 +199,7 @@ button {
     </style>
 </head>
 <body>
+
 <header>
     <div class="container">
         <div class="logo">
@@ -224,6 +225,12 @@ button {
     </div>
 </header>
 <div class="ff">
+<aside class="sidebar">
+    <button>Home</button>
+    <button>Subscriptions</button>
+    <button>Your Channel</button>
+    <button>Watch Later</button>
+</aside>
     <aside class="sidebar">
         <form th:action="@{/}" method="get">
             <button type="submit" class="sidebar-button">Home</button>
@@ -248,6 +255,12 @@ button {
     <div class="video-list">
         <!-- Iterate over videos and render them -->
         <div th:each="video : ${videos}" class="video-item">
+            <img th:src="${video.url}" alt="Video Thumbnail">
+            <div class="video-details">
+                <h3 th:text="${video.title}">Video Title</h3>
+<!--                <p>Channel: <span th:text="${video.channel.channelName}">Channel Name</span></p>-->
+                <p>Likes: <span th:text="${video.likeCount}">0</span></p>
+            </div>
             <a th:href="@{'/channel/view/' + ${video.url}}">
                 <img th:src="${video.url}" alt="Video Thumbnail">
                 <div class="video-details">
@@ -256,6 +269,7 @@ button {
                 </div>
             </a>
         </div>
+</div>
     </div>
 </div>
 </div>
