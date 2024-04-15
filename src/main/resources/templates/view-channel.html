@@ -197,10 +197,25 @@
 </header>
 <div class="ff">
     <aside class="sidebar">
-        <button>Home</button>
-        <button>Subscriptions</button>
-        <button>Your Channel</button>
-        <button>Watch Later</button>
+        <form th:action="@{/}" method="get">
+            <button type="submit" class="sidebar-button">Home</button>
+            <input type="hidden" name="page" value="home">
+        </form>
+
+        <form th:action="@{/}" method="get">
+            <button type="submit" class="sidebar-button">Subscriptions</button>
+            <input type="hidden" name="page" value="subscriptions">
+        </form>
+
+        <form action="your_channel.html" method="get">
+            <button type="submit" class="sidebar-button">Your Channel</button>
+            <input type="hidden" name="page" value="your_channel">
+        </form>
+
+        <form th:action="@{/}" method="get">
+            <button type="submit" class="sidebar-button">Watch Later</button>
+            <input type="hidden" name="page" value="watch_later">
+        </form>
     </aside>
     <div class="channel-container">
         <div class="channel-header">

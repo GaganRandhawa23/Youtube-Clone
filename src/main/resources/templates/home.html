@@ -108,7 +108,6 @@ header {
 }
 .video-item {
     background-color: #fff;
-    border: 2px solid black;
     padding:5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     overflow: hidden;
@@ -125,7 +124,7 @@ header {
 
 .video-item img {
     width: 100%;
-    height: auto;
+    height: 80%;
     object-fit: cover;
 }
 
@@ -196,6 +195,7 @@ button {
     padding:3px;
     border-radius: 50%;
 }
+
     </style>
 </head>
 <body>
@@ -248,23 +248,14 @@ button {
     <div class="video-list">
         <!-- Iterate over videos and render them -->
         <div th:each="video : ${videos}" class="video-item">
-            <a th:href="@{'/channel/view/' + ${video.url}}">
-            <img th:src="${video.url}" alt="Video Thumbnail">
-            <div class="video-details">
-                <h3 th:text="${video.title}">Video Title</h3>
-<!--                <p>Channel: <span th:text="${video.channel.channelName}">Channel Name</span></p>-->
-                <p>Likes: <span th:text="${video.likeCount}">0</span></p>
-            </div>
-
-                <img th:src="${video.url}" alt="Video Thumbnail">
+            <a th:href="@{'/channel/view/'+${video.url}}">
+                <img th:src="@{'/channel/thumbnail/' + ${video.thumbnail}}" alt="Video Thumbnail">
                 <div class="video-details">
                     <h3 th:text="${video.title}">Video Title</h3>
-                    <p>Likes: <span th:text="${video.likeCount}">0</span></p>
+    <!--                <p>Channel: <span th:text="${video.channel.channelName}">Channel Name</span></p>-->
                 </div>
             </a>
         </div>
-</div>
-    </div>
 </div>
 </div>
 </body>
