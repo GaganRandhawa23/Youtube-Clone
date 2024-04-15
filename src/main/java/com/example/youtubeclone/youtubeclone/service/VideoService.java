@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 @Service
@@ -48,15 +49,19 @@ public class VideoService {
     private ChannelRepository channelRepository;
 
     @Autowired
-    public VideoService(VideoRepository videoRepository, TagRepository tagRepository) {
+    public VideoService(VideoRepository videoRepository, TagRepository tagRepository, ChannelRepository channelRepository) {
         this.videoRepository = videoRepository;
         this.tagRepository = tagRepository;
+        this.channelRepository = channelRepository;
     }
-
 
     public String uploadFile(VideoUploadDto videoUploadDto) {
         File convertedFile = convertMultiPartFile(videoUploadDto.getFile());
-        String filename = System.currentTimeMillis() + "_" + videoUploadDto.getFile().getOriginalFilename();
+        File thumbnailFileImage = convertMultiPartFile(videoUploadDto.getThumbnail());
+        String filename = System.currentTimeMillis() + "_" + replaceWhiteSpaces(Objects.requireNonNull(videoUploadDto.getFile().getOriginalFilename()));
+//        System.out.println(filename);
+        String thumbnailFileName = System.currentTimeMillis() + "_" + replaceWhiteSpaces(Objects.requireNonNull(videoUploadDto.getThumbnail().getOriginalFilename()));
+//        System.out.println(thumbnailFileName);
 //        s3Client.putObject(new PutObjectRequest(BucketName, filename, convertedFile));
 //        boolean checkIfFileDeleted = convertedFile.delete();
 //        System.out.println(checkIfFileDeleted);
@@ -66,7 +71,9 @@ public class VideoService {
             CompletableFuture.runAsync(() -> {
                 try {
                     s3Client.putObject(new PutObjectRequest(BucketName, filename, convertedFile));
+                    s3Client.putObject(new PutObjectRequest(BucketName, thumbnailFileName, thumbnailFileImage));
                     boolean checkIfFileDeleted = convertedFile.delete();
+                    boolean checkIfThumbnailFileDeleted = thumbnailFileImage.delete();
                     if (checkIfFileDeleted) {
                         // Redirect upon successful upload
                         System.out.println("File uploaded successfully.");
@@ -118,6 +125,7 @@ public class VideoService {
                 .title(videoUploadDto.getTitle())
                 .description(videoUploadDto.getDescription())
                 .url(filename)
+                .thumbnail(thumbnailFileName)
                 .createdAt(LocalDateTime.now())
                 .likeCount(0L)
                 .user(channel.getUser())
@@ -141,6 +149,21 @@ public class VideoService {
         return null;
     }
 
+    public byte[] getThumbnailFromUrl(String thumbnailUrl) {
+        try {
+            // Retrieve the thumbnail file from Amazon S3 based on the URL
+            S3Object s3Object = s3Client.getObject(BucketName, thumbnailUrl);
+            S3ObjectInputStream inputStream = s3Object.getObjectContent();
+            byte[] content = StreamUtils.copyToByteArray(inputStream);
+            inputStream.close();
+            return content;
+        } catch (IOException e) {
+            e.printStackTrace();
+            // Handle any errors that occur during the process
+        }
+        return null;
+    }
+
     @Transactional
     public String deleteVideo(String url) {
         // Delete from Amazon S3
@@ -154,7 +177,7 @@ public class VideoService {
 
 
     private File convertMultiPartFile(MultipartFile file) {
-        File convertedFileEntity = new File(file.getOriginalFilename());
+        File convertedFileEntity = new File(Objects.requireNonNull(file.getOriginalFilename()));
         try (FileOutputStream fos = new FileOutputStream(convertedFileEntity)) {
             fos.write(file.getBytes());
         } catch (IOException e) {
@@ -165,6 +188,10 @@ public class VideoService {
 
     public List<Video> getAllVideos() {
        return  videoRepository.findAll();
+    }
+
+    public static String replaceWhiteSpaces(String str){
+        return str.replaceAll("\\s+", "_");
     }
 
 }

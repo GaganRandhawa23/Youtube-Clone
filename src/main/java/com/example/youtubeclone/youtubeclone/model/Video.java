@@ -29,6 +29,8 @@ public class Video {
     private LocalDateTime createdAt;
     @Column(name = "like_count")
     private Long likeCount;
+    @Column(name = "thumbnail")
+    private String thumbnail;
 
     @JsonIgnore
     @ManyToOne(cascade = {CascadeType.REFRESH, CascadeType.PERSIST, CascadeType.DETACH, CascadeType.MERGE})

@@ -108,7 +108,6 @@
         }
         .video-item {
             background-color: #fff;
-            border: 2px solid black;
             padding:5px;
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
             overflow: hidden;
@@ -149,13 +148,27 @@
             font-size: 12px;
             color: #888;
         }
-        .channel-container{
+        .video-list{
             display: flex;
             width: 100%;
-            margin-left: 225px;
+            justify-content: center;
             flex-wrap: wrap;
             gap: 30px;
             margin-top: 29px
+        }
+
+        .channel-container {
+            margin-left: 300px;
+            width: 80%;
+            margin-top: 60px;
+        }
+
+        .channel-header {
+            display: flex;
+        }
+
+        .channel-info {
+            padding: 10px 20px;
         }
 
         .channel-img {
@@ -190,30 +203,35 @@
         <button>Watch Later</button>
     </aside>
     <div class="channel-container">
-        <aside>
-            <img class="channel-img" th:src="${channel.getProfilePic()}" />
-        </aside>
-        <div class="channelHeader">
-            <h1 th:text="${channel.getChannelName()}"></h1>
-            <span>
-                <p th:text="${channel.getNumberOfSubscribedUsers()} + subscribers"></p>
+        <div class="channel-header">
+            <aside>
+                <img class="channel-img" th:src="${channel.getProfilePic()}" />
+            </aside>
+            <div class="channel-info">
+                <h1 th:text="${channel.getChannelName()}"></h1>
                 <span>
-                    <p th:text="${channel.getNumberOfVideos()} + videos"></p>
+                    <p th:text="${channel.getNumberOfSubscribedUsers()} + ' ' + subscribers"></p>
+                    <span>
+                        <p th:text="${channel.getNumberOfVideos()} + ' ' + videos"></p>
+                    </span>
                 </span>
-            </span>
+            </div>
         </div>
-    </div>
-    <br>
-    <hr>
-    <br>
-    <div class="video-list">
-        <!-- Iterate over videos and render them -->
-        <div th:each="video : ${channel.getVideos()}" class="video-item">
-            <img th:src="${video.url}" alt="Video Thumbnail">
-            <div class="video-details">
-                <h3 th:text="${video.title}">Video Title</h3>
-<!--                                <p>Channel: <span th:text="${video.channel.channelName}">Channel Name</span></p>-->
-                <p>Likes: <span th:text="${video.likeCount}">0</span></p>
+        <br>
+        <hr>
+        <br>
+        <div class="channel-videos">
+            <div class="video-list">
+                <!-- Iterate over videos and render them -->
+                <div th:each="video : ${channel.videos}" class="video-item">
+                    <a th:href="@{'/channel/view/'+${video.url}}">
+                        <img th:src="@{'/channel/thumbnail/' + ${video.thumbnail}}" alt="Video Thumbnail">
+                        <div class="video-details">
+                            <h3 th:text="${video.title}">Video Title</h3>
+                            <!--                <p>Channel: <span th:text="${video.channel.channelName}">Channel Name</span></p>-->
+                        </div>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
