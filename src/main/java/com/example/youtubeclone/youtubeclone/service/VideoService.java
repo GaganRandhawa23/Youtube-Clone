@@ -178,4 +178,11 @@ public class VideoService {
         return str.replaceAll("\\s+", "_");
     }
 
+    public Video findByVideoId(Long videoId) {
+        return videoRepository.findByVideoId(videoId);
+    }
+
+    public Video findByUrl(String url) {
+        return videoRepository.findVideoByUrl(url);
+    }
 }

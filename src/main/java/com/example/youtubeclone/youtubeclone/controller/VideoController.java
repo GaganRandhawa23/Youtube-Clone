@@ -2,7 +2,9 @@ package com.example.youtubeclone.youtubeclone.controller;
 
 import com.example.youtubeclone.youtubeclone.dto.VideoUploadDto;
 import com.example.youtubeclone.youtubeclone.model.Channel;
+import com.example.youtubeclone.youtubeclone.model.Comment;
 import com.example.youtubeclone.youtubeclone.model.User;
+import com.example.youtubeclone.youtubeclone.model.Video;
 import com.example.youtubeclone.youtubeclone.service.ChannelService;
 import com.example.youtubeclone.youtubeclone.service.UserService;
 import com.example.youtubeclone.youtubeclone.service.VideoService;
@@ -64,7 +66,11 @@ public class VideoController {
     @GetMapping("/view/{url}")
     public String view(@PathVariable String url,Model  model)
     {
+        Video video=videoService.findByUrl(url);
+        List<Comment> comments = video.getComments();
         model.addAttribute("url", url);
+        model.addAttribute("video",video);
+        model.addAttribute("comments", comments);
         return "view";
     }
 
