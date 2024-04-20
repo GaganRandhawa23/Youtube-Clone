@@ -27,6 +27,29 @@
 
         }
 
+        button {
+            border: none; /* Remove default button border */
+            background: none; /* Remove default button background */
+            padding: 0; /* Remove default button padding */
+            cursor: pointer; /* Change cursor to pointer on hover */
+        }
+
+        .upload-button {
+            width: 50px; /* Adjust width as needed */
+            height: 50px; /* Adjust height as needed */
+            /* Add additional styling for the upload button if needed */
+            padding:3px;
+            border-radius: 50%;
+        }
+
+        .user-button {
+            width: 50px; /* Adjust width as needed */
+            height: 50px; /* Adjust height as needed */
+            /* Add additional styling for the user button if needed */
+            padding:3px;
+            border-radius: 50%;
+        }
+
         /* Sidebar styles */
         .sidebar {
             width: 200px;
@@ -98,6 +121,20 @@
             border-radius: 4px;
             cursor: pointer;
             height:40px;
+        }
+
+        a{
+            margin-right:10px;
+            color:white;
+        }
+        .top-right-buttons {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 999; /* Ensure it's above other content */
+            display:flex;
+            padding:10px;
+
         }
 
         /* Main content styles */
@@ -175,11 +212,6 @@
             border-radius: 50%;
         }
 
-        a{
-            margin-right:10px;
-            color:white;
-        }
-
     </style>
 </head>
 <body>
@@ -187,11 +219,23 @@
 <header>
     <div class="container">
         <div class="logo">
-            <img src="https://t3.ftcdn.net/jpg/05/07/46/84/360_F_507468479_HfrpT7CIoYTBZSGRQi7RcWgo98wo3vb7.jpg" alt="YourTube Logo">
+            <a th:href="@{/}"><img src="https://t3.ftcdn.net/jpg/05/07/46/84/360_F_507468479_HfrpT7CIoYTBZSGRQi7RcWgo98wo3vb7.jpg" alt="YourTube Logo"></a>
         </div>
         <div class="search-bar">
-            <input type="text" placeholder="Search">
-            <button>Search</button>
+            <form th:action="@{/}" method="get">
+                <input type="text" id="keyword" name="keyword" placeholder="Search">
+                <button type="submit">Search</button>
+            </form>
+        </div>
+        <div class="top-right-buttons">
+            <form th:action="@{/channel/upload}" method="get">
+                <button type="submit">
+                    <img class="upload-button" src="data:image/png;base64,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" alt="Upload Icon">
+                </button>
+            </form>
+            <a th:href="@{'/channel/'+${user.getUsername()}}">
+                <img class="user-button" th:src="${user.getProfilePic()}" alt="User Icon">
+            </a>
         </div>
     </div>
 </header>
@@ -199,22 +243,18 @@
     <aside class="sidebar">
         <form th:action="@{/}" method="get">
             <button type="submit" class="sidebar-button">Home</button>
-            <input type="hidden" name="page" value="home">
         </form>
 
         <form th:action="@{/}" method="get">
             <button type="submit" class="sidebar-button">Subscriptions</button>
-            <input type="hidden" name="page" value="subscriptions">
         </form>
 
-        <form action="your_channel.html" method="get">
+        <form th:action="@{'/channel/'+${user.getUsername()}}" method="get">
             <button type="submit" class="sidebar-button">Your Channel</button>
-            <input type="hidden" name="page" value="your_channel">
         </form>
 
-        <form th:action="@{/}" method="get">
+        <form th:action="@{/videos/watchlater}" method="get">
             <button type="submit" class="sidebar-button">Watch Later</button>
-            <input type="hidden" name="page" value="watch_later">
         </form>
     </aside>
     <div class="channel-container">

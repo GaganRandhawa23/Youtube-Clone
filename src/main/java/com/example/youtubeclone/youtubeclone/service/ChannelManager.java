@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @AllArgsConstructor
 @Service
@@ -32,6 +33,7 @@ public class ChannelManager implements ChannelService{
                     .email(email)
                     .profilePic(profileDp)
                     .joinDate(LocalDateTime.now())
+                    .watchLaterVideos(null)
                     .username(name)
                     .build();
             Channel channel = Channel.builder()
@@ -68,5 +70,22 @@ public class ChannelManager implements ChannelService{
     @Override
     public List<Channel> findChannelByUser(User user) {
         return channelRepository.findChannelsByUser(user);
+    }
+
+    @Override
+    public void subscribeChannel(User loggedInUser, Long channelId) {
+        Channel channel = channelRepository.findById(channelId).orElseThrow();
+        List<Channel> existingSubscriptions = loggedInUser.getSubscribedChannels();
+        if(!existingSubscriptions.contains(channel)) {
+            existingSubscriptions.add(channel);
+        }
+        List<User> existingSubscribedUsers = channel.getSubscribedUsers();
+        if(!existingSubscribedUsers.contains(loggedInUser)) {
+            existingSubscribedUsers.add(loggedInUser);
+        }
+        channel.setSubscribedUsers(existingSubscribedUsers);
+        loggedInUser.setSubscribedChannels(existingSubscriptions);
+        channelRepository.save(channel);
+        userRepository.save(loggedInUser);
     }
 }

@@ -2,11 +2,15 @@ package com.example.youtubeclone.youtubeclone.controller;
 
 
 import com.example.youtubeclone.youtubeclone.model.Comment;
+import com.example.youtubeclone.youtubeclone.model.User;
 import com.example.youtubeclone.youtubeclone.model.Video;
 import com.example.youtubeclone.youtubeclone.service.CommentService;
+import com.example.youtubeclone.youtubeclone.service.UserService;
 import com.example.youtubeclone.youtubeclone.service.VideoService;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -16,12 +20,15 @@ import java.util.List;
 @Controller
 @RequestMapping("/videos")
 public class CommentController {
-    private CommentService commentService;
-    private VideoService videoService;
+    private final CommentService commentService;
+    private final VideoService videoService;
+    private final UserService userService;
+
     @Autowired
-    public CommentController(CommentService commentService, VideoService videoService ){
+    public CommentController(CommentService commentService, VideoService videoService, UserService userService) {
         this.commentService = commentService;
         this.videoService = videoService;
+        this.userService = userService;
     }
 
     @PostMapping("/addComment{videoId}")
@@ -36,8 +43,6 @@ public class CommentController {
         Video video = videoService.findByVideoId(videoId);
         String url=video.getUrl();
         List<Comment> comments = video.getComments();
-//        model.addAttribute("commentId", comment.getCommentId());
-//        model.addAttribute("comment",comment);
         model.addAttribute("comments", comments)
 ;        return "redirect:/channel/view/" + url;
     }
@@ -54,7 +59,15 @@ public class CommentController {
     }
 
     @GetMapping("/updateComment{videoId}/{commentId}")
-    public String updateComment(@PathVariable("videoId") Long videoId, @PathVariable("commentId") Long commentId, Model model) {
+    public String updateComment(
+            @PathVariable("videoId") Long videoId,
+            @PathVariable("commentId") Long commentId,
+            Model model,
+            OAuth2AuthenticationToken authentication
+    ) {
+        OAuth2AuthenticatedPrincipal oauth2Principal = authentication.getPrincipal();
+        String email = oauth2Principal.getAttribute("email");
+        User existingUser = userService.getUserByEmail(email);
         Video video = videoService.findByVideoId(videoId);
         List<Comment> comments = video.getComments();
         Comment comment = commentService.findCommentByCommentId(commentId);
@@ -65,6 +78,7 @@ public class CommentController {
             model.addAttribute("comments", comments);
             model.addAttribute("theComment", theComment);
             model.addAttribute("comment", comment);
+            model.addAttribute("user",existingUser);
             commentService.saveComment(comment);
             return "view";
         } else {

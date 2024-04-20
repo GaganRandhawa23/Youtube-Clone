@@ -16,4 +16,6 @@ public interface ChannelService {
     void saveChannel(Channel channel);
 
     List<Channel> findChannelByUser(User user);
+
+    void subscribeChannel(User loggedInUser, Long channelId);
 }

@@ -42,5 +42,4 @@ public class User {
             inverseJoinColumns = {@JoinColumn(name = "channel_id")}
     )
     private List<Channel> subscribedChannels;
-
 }

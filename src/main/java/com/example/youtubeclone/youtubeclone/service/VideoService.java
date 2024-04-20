@@ -59,15 +59,9 @@ public class VideoService {
         File convertedFile = convertMultiPartFile(videoUploadDto.getFile());
         File thumbnailFileImage = convertMultiPartFile(videoUploadDto.getThumbnail());
         String filename = System.currentTimeMillis() + "_" + replaceWhiteSpaces(Objects.requireNonNull(videoUploadDto.getFile().getOriginalFilename()));
-        System.out.println(filename);
         String thumbnailFileName = System.currentTimeMillis() + "_" + replaceWhiteSpaces(Objects.requireNonNull(videoUploadDto.getThumbnail().getOriginalFilename()));
-        System.out.println(thumbnailFileName);
-//        s3Client.putObject(new PutObjectRequest(BucketName, filename, convertedFile));
-//        boolean checkIfFileDeleted = convertedFile.delete();
-//        System.out.println(checkIfFileDeleted);
 
         try {
-            // Upload file to S3 asynchronously
             CompletableFuture.runAsync(() -> {
                 try {
                     s3Client.putObject(new PutObjectRequest(BucketName, filename, convertedFile));
@@ -75,7 +69,6 @@ public class VideoService {
                     boolean checkIfFileDeleted = convertedFile.delete();
                     boolean checkIfThumbnailFileDeleted = thumbnailFileImage.delete();
                     if (checkIfFileDeleted) {
-                        // Redirect upon successful upload
                         System.out.println("File uploaded successfully.");
                     } else {
                         // Log error if file deletion fails
@@ -131,6 +124,7 @@ public class VideoService {
                 .user(channel.getUser())
                 .channel(channel)
                 .tags(allUniqueTagsForThisVideo)
+                .comments(null)
                 .build();
         videoRepository.save(video);
         return "file Uploaded : " + filename;
@@ -151,7 +145,6 @@ public class VideoService {
 
     public byte[] getThumbnailFromUrl(String thumbnailUrl) {
         try {
-            // Retrieve the thumbnail file from Amazon S3 based on the URL
             S3Object s3Object = s3Client.getObject(BucketName, thumbnailUrl);
             S3ObjectInputStream inputStream = s3Object.getObjectContent();
             byte[] content = StreamUtils.copyToByteArray(inputStream);
@@ -159,19 +152,14 @@ public class VideoService {
             return content;
         } catch (IOException e) {
             e.printStackTrace();
-            // Handle any errors that occur during the process
         }
         return null;
     }
 
     @Transactional
     public String deleteVideo(String url) {
-        // Delete from Amazon S3
         s3Client.deleteObject(BucketName, url);
-
-        // Delete from database
         videoRepository.deleteByUrl(url);
-
         return url + " removed from Amazon S3 and database.";
     }
 
@@ -200,5 +188,9 @@ public class VideoService {
 
     public Video findByUrl(String url) {
         return videoRepository.findVideoByUrl(url);
+    }
+
+    public void saveVideo(Video video) {
+        videoRepository.save(video);
     }
 }

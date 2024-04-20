@@ -5,10 +5,12 @@ import com.example.youtubeclone.youtubeclone.model.Channel;
 import com.example.youtubeclone.youtubeclone.model.Comment;
 import com.example.youtubeclone.youtubeclone.model.User;
 import com.example.youtubeclone.youtubeclone.model.Video;
+import com.example.youtubeclone.youtubeclone.repository.VideoRepository;
 import com.example.youtubeclone.youtubeclone.service.ChannelService;
 import com.example.youtubeclone.youtubeclone.service.UserService;
 import com.example.youtubeclone.youtubeclone.service.VideoService;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,12 +25,18 @@ import java.util.*;
 
 @Controller
 @RequestMapping("/channel")
-@AllArgsConstructor
 public class VideoController {
 
     private final ChannelService channelService;
     private final VideoService videoService;
     private final UserService userService;
+
+    @Autowired
+    public VideoController(ChannelService channelService, VideoService videoService, UserService userService) {
+        this.channelService = channelService;
+        this.videoService = videoService;
+        this.userService = userService;
+    }
 
     @GetMapping("/upload")
     public String uploadVideo(
@@ -36,7 +44,7 @@ public class VideoController {
             Model model
     )
     {
-        OAuth2AuthenticatedPrincipal oauth2Principal = (OAuth2AuthenticatedPrincipal) authentication.getPrincipal();
+        OAuth2AuthenticatedPrincipal oauth2Principal = authentication.getPrincipal();
         String email = oauth2Principal.getAttribute("email");
         User user = userService.getUserByEmail(email);
         List<Channel> channelList = channelService.findChannelByUser(user);
@@ -49,7 +57,6 @@ public class VideoController {
             VideoUploadDto videoUploadDto
     ){
         return new ResponseEntity<>(videoService.uploadFile(videoUploadDto), HttpStatus.OK);
-//        return new ResponseEntity<>(videoService.uploadFile(file,title,description), HttpStatus.OK);
     }
 
     @GetMapping("/preview/{url}")
@@ -90,12 +97,19 @@ public class VideoController {
     }
 
     @GetMapping("/view/{url}")
-    public String view(@PathVariable String url,Model  model)
+    public String view(
+            @PathVariable String url,
+            OAuth2AuthenticationToken authentication,
+            Model  model)
     {
+        OAuth2AuthenticatedPrincipal oauth2Principal = (OAuth2AuthenticatedPrincipal) authentication.getPrincipal();
+        String email = oauth2Principal.getAttribute("email");
+        User existingUser = userService.getUserByEmail(email);
         Video video=videoService.findByUrl(url);
         List<Comment> comments = video.getComments();
         model.addAttribute("url", url);
         model.addAttribute("video",video);
+        model.addAttribute("user",existingUser);
         model.addAttribute("comments", comments);
         return "view";
     }
@@ -107,5 +121,25 @@ public class VideoController {
         return "upload-video";
     }
 
+    @PostMapping("/video/voting")
+    public String feedbackActions(
+            @RequestParam(name = "feedback") String feedback,
+            @RequestParam(name = "videoId") Long videoId
+    ) {
+        Video video = videoService.findByVideoId(videoId);
+            Long count = video.getLikeCount();
+            if(feedback.equals("positive")) {
+                count++;
+                video.setLikeCount(count);
+            }
+            else {
+                if(count > 0) {
+                    count--;
+                    video.setLikeCount(count);
+                }
+            }
+        videoService.saveVideo(video);
+        return "redirect:/channel/view/" + video.getUrl();
+    }
 
 }

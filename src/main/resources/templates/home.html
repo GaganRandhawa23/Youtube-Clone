@@ -65,7 +65,6 @@ header {
     background-color: #333;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     padding: 15px 0;
-
 }
 
 .logo img {
@@ -202,7 +201,7 @@ button {
 <header>
     <div class="container">
         <div class="logo">
-            <a href="@{/}"><img src="https://t3.ftcdn.net/jpg/05/07/46/84/360_F_507468479_HfrpT7CIoYTBZSGRQi7RcWgo98wo3vb7.jpg" alt="YourTube Logo"></a>
+            <a th:href="@{/}"><img src="https://t3.ftcdn.net/jpg/05/07/46/84/360_F_507468479_HfrpT7CIoYTBZSGRQi7RcWgo98wo3vb7.jpg" alt="YourTube Logo"></a>
         </div>
         <div class="search-bar">
             <form th:action="@{/}" method="get">
@@ -219,7 +218,6 @@ button {
             <a th:href="@{'/channel/'+${user.getUsername()}}">
                 <img class="user-button" th:src="${user.getProfilePic()}" alt="User Icon">
             </a>
-
         </div>
     </div>
 </header>
@@ -227,22 +225,18 @@ button {
     <aside class="sidebar">
         <form th:action="@{/}" method="get">
             <button type="submit" class="sidebar-button">Home</button>
-            <input type="hidden" name="page" value="home">
         </form>
 
         <form th:action="@{/}" method="get">
             <button type="submit" class="sidebar-button">Subscriptions</button>
-            <input type="hidden" name="page" value="subscriptions">
         </form>
 
-        <form action="your_channel.html" method="get">
+        <form th:action="@{'/channel/'+${user.getUsername()}}" method="get">
             <button type="submit" class="sidebar-button">Your Channel</button>
-            <input type="hidden" name="page" value="your_channel">
         </form>
 
-        <form th:action="@{/}" method="get">
+        <form th:action="@{/videos/watchlater}" method="get">
             <button type="submit" class="sidebar-button">Watch Later</button>
-            <input type="hidden" name="page" value="watch_later">
         </form>
     </aside>
     <div class="video-list">
@@ -252,7 +246,6 @@ button {
                 <img th:src="@{'/channel/thumbnail/' + ${video.thumbnail}}" alt="Video Thumbnail">
                 <div class="video-details">
                     <h3 th:text="${video.title}">Video Title</h3>
-    <!--                <p>Channel: <span th:text="${video.channel.channelName}">Channel Name</span></p>-->
                 </div>
             </a>
         </div>
